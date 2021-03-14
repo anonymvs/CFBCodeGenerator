@@ -32,9 +32,6 @@ class ElementCreator {
     this.y = posY;
   }
 
-  
-
-
   createNodeElement () {
     var group = new Konva.Group({
       x: this.x,

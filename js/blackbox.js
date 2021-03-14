@@ -1,5 +1,3 @@
-
-
 class BlackBox {
   constructor (posX, posY) {
     this.x = posX;
@@ -12,7 +10,7 @@ class BlackBox {
     this.rect = createRectElement (0, 0);
     this.rect.on('dblclick', this.onDoubleClick);
 
-    this.title = createTitleElement (2, 2, this.name);
+    this.title = createTitleElement (6, 6, this.name);
     this.title.on ('dblclick dbltap', this.onTitleDoubleClick);
 
     this.group = new Konva.Group({
@@ -23,6 +21,9 @@ class BlackBox {
 
     this.group.add(this.rect);
     this.group.add(this.title);
+
+    this.onTitleDoubleClick = this.onTitleDoubleClick.bind (this);
+    this.getElement = this.getElement.bind (this);
   }
 
   getElement () {
@@ -34,25 +35,36 @@ class BlackBox {
   }
 
   onTitleDoubleClick () {
-    this.title.hide();
+    var title = this;
+    title.hide();
+    layer.draw();
 
-    var textPosition = this.title.absolutePosition();
+    var titlePosition = title.absolutePosition();
+    //var groupPosition = title.parent.absolutePosition();
 
     // so position of textarea will be the sum of positions above:
     var areaPosition = {
-      x: stage.container().offsetLeft + textPosition.x,
-      y: stage.container().offsetTop + textPosition.y,
+      x: stage.container().offsetLeft + titlePosition.x,
+      y: stage.container().offsetTop + titlePosition.y,
     };
 
-    var textarea = document.createElement('textarea');
-    document.body.appendChild(textarea);
+    // var areaPosition = {
+    //   x: textPosition.x,
+    //   y: textPosition.y,
+    // };
 
-    textarea.value = this.title.text();
+    var textarea = document.createElement('textarea');
+    var container = document.getElementById('container');
+    container.appendChild(textarea);
+
+    textarea.value = title.text();
+    
+    textarea.style.zIndex = '10';
     textarea.style.top = areaPosition.y + 'px';
     textarea.style.left = areaPosition.x + 'px';
-    textarea.style.width = this.title.width() - this.title.padding() * 2 + 'px';
-    textarea.style.height = this.title.height() - this.title.padding() * 2 + 5 + 'px';
-    textarea.style.fontSize = this.title.fontSize() + 'px';
+    textarea.style.width = title.width() - title.padding() * 2 + 'px';
+    textarea.style.height = title.height() - title.padding() * 2 + 5 + 'px';
+    textarea.style.fontSize = title.fontSize() + 'px';
     textarea.style.border = 'none';
     textarea.style.padding = '0px';
     textarea.style.margin = '0px';
@@ -60,11 +72,14 @@ class BlackBox {
     textarea.style.background = 'none';
     textarea.style.outline = 'none';
     textarea.style.resize = 'none';
-    textarea.style.lineHeight = this.title.lineHeight();
-    textarea.style.fontFamily = this.title.fontFamily();
-    textarea.style.transformOrigin = 'left top';
-    textarea.style.textAlign = this.title.align();
-    textarea.style.color = this.title.fill();
+    textarea.style.lineHeight = title.lineHeight();
+    textarea.style.fontFamily = title.fontFamily();
+    textarea.style.transformOrigin = 'left bottom';
+    textarea.style.textAlign = title.align();
+    textarea.style.color = title.fill();
+    textarea.style.position = 'absolute';
+
+    textarea.style.transform = 'translateY(-100 px)';
 
     // reset height
     textarea.style.height = 'auto';
@@ -76,16 +91,14 @@ class BlackBox {
     function removeTextarea() {
       textarea.parentNode.removeChild(textarea);
       window.removeEventListener('click', handleOutsideClick);
-      this.title.show();
-      tr.show();
-      tr.forceUpdate();
+      title.show();
       layer.draw();
     }
 
     function setTextareaWidth(newWidth) {
       if (!newWidth) {
         // set width for placeholder
-        newWidth = this.title.placeholder.length * this.title.fontSize();
+        newWidth = title.placeholder.length * title.fontSize();
       }
       // some extra fixes on different browsers
       var isSafari = /^((?!chrome|android).)*safari/i.test(
@@ -109,7 +122,7 @@ class BlackBox {
       // hide on enter
       // but don't hide on shift + enter
       if (e.keyCode === 13 && !e.shiftKey) {
-        this.title.text(textarea.value);
+        title.text(textarea.value);
         removeTextarea();
       }
       // on esc do not set value back to node
@@ -119,16 +132,16 @@ class BlackBox {
     });
 
     textarea.addEventListener('keydown', function (e) {
-      scale = this.title.getAbsoluteScale().x;
-      setTextareaWidth(this.title.width() * scale);
+      var scale = title.getAbsoluteScale().x;
+      setTextareaWidth(title.width() * scale);
       textarea.style.height = 'auto';
       textarea.style.height =
-        textarea.scrollHeight + this.title.fontSize() + 'px';
+        textarea.scrollHeight + title.fontSize() + 'px';
     });
 
     function handleOutsideClick(e) {
       if (e.target !== textarea) {
-        this.title.text(textarea.value);
+        title.text(textarea.value);
         removeTextarea();
       }
     }
