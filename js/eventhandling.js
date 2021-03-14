@@ -23,6 +23,4 @@ window.onload = function () {
 
     activeElement = canvas_elements.NODE;
   };
-
-
 }

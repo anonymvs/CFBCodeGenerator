@@ -10,7 +10,6 @@ var stage = new Konva.Stage({
 const layer = new Konva.Layer();
 stage.add(layer);
 
-
 stage.on('click', function (evt) {
   var p = document.getElementById("eventlog");
   p.textContent = "Clicked somewhere pressed";

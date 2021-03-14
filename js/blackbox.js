@@ -36,6 +36,8 @@ class BlackBox {
 
   onTitleDoubleClick () {
     var title = this;
+    var temp = activeElement;
+    activeElement = canvas_elements.NONE;
     title.hide();
     layer.draw();
 
@@ -143,6 +145,7 @@ class BlackBox {
       if (e.target !== textarea) {
         title.text(textarea.value);
         removeTextarea();
+        activeElement = temp;
       }
     }
     setTimeout(() => {
